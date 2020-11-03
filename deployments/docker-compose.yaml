@@ -2,13 +2,18 @@ version: '3'
 
 services:
   db:
-    image: redis:4.0
+    image: redis:latest
     volumes:
-      - ./data:/data
+       - ./data/redis:/data  # 数据目录
+       - ./conf/redis/redis.conf:/etc/redis/redis.conf  # 配置文件
     ports:
       - 6379:6379
-    command: ["redis-server", "--appendonly", "yes"]
-
+      sysctls:
+      - net.core.somaxconn=1024
+    command: 
+      bash -c "echo 'vm.overcommit_memory = 1' >> /etc/sysctl.conf
+      && redis-server /etc/redis/redis.conf --appendonly yes"
+      
   apiserver:
     image: studiomj/jump-jump
     depends_on:
@@ -20,7 +25,7 @@ services:
       - REDIS_DB=0
       - REDIS_HOST=db:6379
       - J2_API_ADDR=0.0.0.0:8080
-      - SECRET_KEY=YOUR_SECRET_KEY
+      - SECRET_KEY=vinzst
       - GIN_MODE=release
       - ALLOWED_HOSTS=localhost,127.0.0.1
 
