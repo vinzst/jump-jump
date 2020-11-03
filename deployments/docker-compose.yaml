@@ -4,8 +4,8 @@ services:
   db:
     image: redis:latest
     volumes:
-       - ./data/redis:/data  # 数据目录
-       - ./conf/redis/redis.conf:/etc/redis/redis.conf  # 配置文件
+      - ./data/redis:/data  # 数据目录
+      - ./conf/redis/redis.conf:/etc/redis/redis.conf  # 配置文件
     ports:
       - 6379:6379
       sysctls:
