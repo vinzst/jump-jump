@@ -5,9 +5,15 @@ services:
     image: redis:4.0
     volumes:
       - ./data:/data
+      - ./conf/redis/redis.conf:/etc/redis/redis.conf
     ports:
       - 6379:6379
-    command: ["redis-server", "--appendonly", "yes"]
+    sysctls:
+      - net.core.somaxconn=1024
+    command: 
+        bash -c "echo 'vm.overcommit_memory = 1' >> /etc/sysctl.conf
+        && redis-server /etc/redis/redis.conf --appendonly yes"
+        ["redis-server", "--appendonly", "yes"]
 
   apiserver:
     image: studiomj/jump-jump
